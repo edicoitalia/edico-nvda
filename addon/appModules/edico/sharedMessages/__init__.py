@@ -7,3 +7,4 @@
 
 GLB_ON = _('on')
 GLB_OFF = _('off')
+GLB_UNSEL = _("selection removed")
