@@ -4,6 +4,7 @@
 #This file is covered by the GNU General Public License.
 #See the file COPYING for more details.
 #Copyright (C) 2022 Alberto Zanella - IRIFOR
+#Copyright (C) 2024 Alberto Zanella - Edico Targato Italia
 
 import eventHandler
 from . import sharedMessages as shMsg
@@ -75,6 +76,7 @@ class EdicoEditor(IAccessible) :
                 speech.speakText(txt)
         braille.handler.handleCaretMove(self)
     
+    #This script is not used, speaks the deleted character instead of the remaining one. This is not the NVDA standard.
     def script_caret_deleteCharacter(self,gesture):
         txt = edicoApi.getApiObject().GetCharacter(9, "Ctrl+J")
         newInfo=self.makeTextInfo(textInfos.POSITION_SELECTION)
@@ -182,7 +184,7 @@ class EdicoEditor(IAccessible) :
     'kb:alt+f5': 'caret_moveByCharacter',
     'kb:control+d': 'caret_moveByLine',
     'kb:f4': 'f4',
-    "kb:delete": "caret_deleteCharacter",
+    "kb:delete": 'caret_moveByCharacter',
     #Report selection
     'kb(desktop):NVDA+shift+upArrow': 'reportCurrentSelection',
     'kb(laptop):NVDA+shift+s': 'reportCurrentSelection',
