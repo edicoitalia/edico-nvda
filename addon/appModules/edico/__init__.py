@@ -1,12 +1,15 @@
 #Addon for EDICO Math Editor
 #This file is covered by the GNU General Public License.
 #See the file COPYING for more details.
-#Copyright (C) 2021-2022 Alberto Zanella - I.Ri.Fo.R. - https://www.irifor.eu/
+#Copyright (C) 2021-2022 Alberto Zanella - IRIFOR
+#Copyright (C) 2023-2025 Alberto Zanella - Edico Targato Italia
+
 
 import UIAHandler
 import ui
 from logHandler import log
 import api
+from config import conf
 from keyboardHandler import KeyboardInputGesture
 import addonHandler
 import textInfos
@@ -43,6 +46,10 @@ class AppModule(appModuleHandler.AppModule):
         else: #If a edico profile doesn't exists:
             edicoProfileSetup.createEdicoProfile()
         edicoProfileSetup.addBrailleTableToGUI()
+        self.fontFormatConfig = dict()
+        for i in conf["documentFormatting"]:
+            self.fontFormatConfig[i] = i == "reportFontName"
+
 
     def terminate(self) :
         edicoObj.edicoApi._oEdico = None

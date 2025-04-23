@@ -41,8 +41,62 @@ edicoApi = EdicoCOMApiProvider()
 class EdicoEditor(IAccessible) :
     hasBackspaced = False
     
+    CHEM_NUM_COLLECTION = ">,;:*?+=<}"
+    CHEM_FONT_NAME = "edico_es_chem"
+    
     #Translators: description of the calculator edit box
     CALCULATOR_EQUATION_EDIT = _("equation")
+    
+    def isInChemMode(self,info) :
+        """
+        Check if the cursor is positioned in a chemistry-related environment.
+
+        This function analyzes the text formatting at the cursor's location and determines whether it matches the expected chemistry mode font (e.g., for chemical formulas).
+
+        @param info: textInfos.TextInfo : caret-related textInfo
+
+        @return: bool
+            - `True` if the cursor is in a chemistry-formatted text field (font matches `self.CHEM_FONT_NAME`).
+            - `False` otherwise.
+        """    
+        formatField=textInfos.FormatField()
+        for field in info.getTextWithFields(self.appModule.fontFormatConfig):
+            if isinstance(field,textInfos.FieldCommand) and isinstance(field.field,textInfos.FormatField):
+                formatField.update(field.field)
+        return formatField['font-name'] == self.CHEM_FONT_NAME
+    
+    
+    def getChemNum(self,info) :
+        """
+        Retrieve the proper pronunciation for a subscript digit in chemistry context.
+
+        This function checks if the current cursor position is in chemistry mode and analyzes the preceding characters to determine if they form a valid chemical subscript number.
+        If valid, it returns the proper pronunciation for the subscript digit.
+
+        @param info: textInfos.TextInfo
+            An object containing text and formatting information at the current cursor position.
+
+        @return: str or None
+            - The pronunciation string for the subscript digit if found in chemistry context.
+            - None o.w. and if any error occurs during processing
+        """
+        try :
+            if not self.isInChemMode(info) : return None
+            chemInfo = info.copy()
+            chemInfo.move(textInfos.UNIT_LINE,-1,"start")
+            chemTxt = chemInfo.text
+            chemTxt = chemTxt[::-1]
+            if chemTxt[0] not in self.CHEM_NUM_COLLECTION : return None
+            for c in chemTxt[1:] :
+                if c in self.CHEM_NUM_COLLECTION :
+                    continue
+                if c.isalpha() :
+                    return str(self.CHEM_NUM_COLLECTION.index(chemTxt[0]))
+                else :
+                    return None
+            return None
+        except : return None
+    
     def detectPossibleSelectionChange(self) :
         newInfo=self.makeTextInfo(textInfos.POSITION_SELECTION)
         if(len(newInfo.text) == 0) : return
@@ -106,10 +160,11 @@ class EdicoEditor(IAccessible) :
     
     def script_caret_moveByCharacter(self, gesture):
         gesture.send()
-        txt = edicoApi.getApiObject().GetChar()
+        info = self.makeTextInfo(textInfos.POSITION_SELECTION)
+        info.expand(textInfos.UNIT_CHARACTER)
+        txt = self.getChemNum(info)
+        if not txt : txt = edicoApi.getApiObject().GetChar()
         if( (txt != ' ') and (len(txt) == 1) and re.match("[^A-Za-z0-9]",txt)): 
-            info = self.makeTextInfo(textInfos.POSITION_SELECTION)
-            info.expand(textInfos.UNIT_CHARACTER)
             speech.speakTextInfo(info, unit=textInfos.UNIT_CHARACTER, reason=controlTypes.OutputReason.CARET)
         else: speech.speakText(txt)
         braille.handler.handleCaretMove(self)
