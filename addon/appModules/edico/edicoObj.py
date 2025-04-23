@@ -58,7 +58,7 @@ class EdicoEditor(IAccessible) :
         @return: bool
             - `True` if the cursor is in a chemistry-formatted text field (font matches `self.CHEM_FONT_NAME`).
             - `False` otherwise.
-        """    
+        """
         formatField=textInfos.FormatField()
         for field in info.getTextWithFields(self.appModule.fontFormatConfig):
             if isinstance(field,textInfos.FieldCommand) and isinstance(field.field,textInfos.FormatField):
