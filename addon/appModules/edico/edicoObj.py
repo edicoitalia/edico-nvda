@@ -4,7 +4,7 @@
 #This file is covered by the GNU General Public License.
 #See the file COPYING for more details.
 #Copyright (C) 2022 Alberto Zanella - IRIFOR
-#Copyright (C) 2024 Alberto Zanella - Edico Targato Italia
+#Copyright (C) 2023-2025 Alberto Zanella - Edico Targato Italia
 
 import eventHandler
 from . import sharedMessages as shMsg
@@ -72,7 +72,7 @@ class EdicoEditor(IAccessible) :
             txt = edicoApi.getApiObject().GetBackSpace()
             if txt == "\u2021" : #Handled by a custom script for Control+J
                 pass
-            elif config.conf['keyboard']['speakTypedCharacters']:
+            elif config.conf['keyboard']['speakTypedCharacters'] > 0:
                 speech.speakText(txt)
         braille.handler.handleCaretMove(self)
     
@@ -87,7 +87,7 @@ class EdicoEditor(IAccessible) :
             gesture.send()
             txt = edicoApi.getApiObject().GetChar()
             txt = txt + ", "+ shMsg.GLB_UNSEL
-        if config.conf['keyboard']['speakTypedCharacters']:
+        if config.conf['keyboard']['speakTypedCharacters'] > 0:
             speech.speakText(txt)
         braille.handler.handleCaretMove(self)
     
@@ -148,7 +148,7 @@ class EdicoEditor(IAccessible) :
     
     def script_controlJ(self,gesture):
         txt = edicoApi.getApiObject().GetCharacter(0,"Ctrl+J")
-        if config.conf['keyboard']['speakTypedCharacters']:
+        if config.conf['keyboard']['speakTypedCharacters'] > 0:
             speech.speakText(txt)
         gesture.send()
     
