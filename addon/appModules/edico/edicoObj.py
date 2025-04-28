@@ -171,16 +171,22 @@ class EdicoEditor(IAccessible) :
     
     def script_caret_moveByLine(self, gesture):
         gesture.send()
-        speech.speakText(edicoApi.getApiObject().GetLine())
+        speech.speakText(edicoApi.getApiObject().GetLine().replace("\u0309", ""))
         braille.handler.handleCaretMove(self)
     
     def script_caret_moveByWord(self,gesture):
         gesture.send()
-        speech.speakText(edicoApi.getApiObject().SayWord())
+        info = self.makeTextInfo(textInfos.POSITION_SELECTION)
+        info.expand(textInfos.UNIT_WORD)
+        txt = edicoApi.getApiObject().SayWord()     
+        if( (len(txt) == 0) or (txt != ' ') and (len(txt) == 1) and re.match("[^A-Za-z0-9]",txt)): 
+            speech.speakTextInfo(info, unit=textInfos.UNIT_WORD, reason=controlTypes.OutputReason.CARET)
+        else :
+            speech.speakText(txt)
         braille.handler.handleCaretMove(self)
     
     def script_reportCurrentLine(self,gesture):
-        speech.speakText(edicoApi.getApiObject().GetLine())
+        speech.speakText(edicoApi.getApiObject().GetLine().replace("\u0309", ""))
     #Translators: this is a custom implementation of the globalCommands gesture, it doesn't support spelling.
     script_reportCurrentLine.__doc__=_("Reports the current line under the application cursor.")
 

@@ -25,7 +25,7 @@ addon_info = {
 	# Translators: Long description to be shown for this add-on on add-on information from add-ons manager
 	"addon_description": _("""This addon provides access to the EDICO scientific editor"""),
 	# version
-	"addon_version": "2025.1",
+	"addon_version": "2025.2-dev",
 	# Author(s)
 	"addon_author": "Alberto Zanella - I.Ri.Fo.R. - https://www.irifor.eu/",
 	# URL for the add-on documentation support
@@ -41,7 +41,7 @@ addon_info = {
 	# Add-on update channel (default is None, denoting stable releases,
 	# and for development releases, use "dev".)
 	# Do not change unless you know what you are doing!
-	"addon_updateChannel": None,
+	"addon_updateChannel": "dev",
     # Add-on license such as GPL 2
 	"addon_license": None,
 	# URL for the license document the ad-on is licensed under
